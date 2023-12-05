@@ -9,8 +9,9 @@ describe("todo-list-app", () => {
   anchor.setProvider(anchor.AnchorProvider.env());
   const program = anchor.workspace.TodoListApp as Program<TodoListApp>;
   const author = program.provider as anchor.AnchorProvider;
+  const task = anchor.web3.Keypair.generate();
   it("can create a task", async () => {
-    const task = anchor.web3.Keypair.generate();
+    //const task = anchor.web3.Keypair.generate();
     const tx = await program.methods
     .addingTask("You are awesome")
     .accounts({
@@ -95,31 +96,30 @@ describe("todo-list-app", () => {
   //   assert.equal(tasks.length, 1);
   // });
 
-  // it("can update a task to done", async () => {
-  //   const task = anchor.web3.Keypair.generate();
-  //   // create a new task
-  //   // fetch it from the same address
-  //   // then update
-  //   const tx = await program.methods
-  //     .updatingTask(true)
-  //     .accounts({
-  //       task: task.publicKey,
-  //       author: author.wallet.publicKey,
-  //     })
-  //     .signers([author])
-  //     .rpc();
+  it("can update a task to done", async () => {
+    // const task = anchor.web3.Keypair.generate();
+    // create a new task
+    // fetch it from the same address
+    // then update
+    const tx = await program.methods
+      .updatingTask(true)
+      .accounts({
+        task: task.publicKey
+      })
+      .signers([])
+      .rpc();
 
-  //   console.log("Your transaction signature", tx);
+    console.log("Your transaction signature", tx);
 
-  //   const taskAccount = await program.account.task.fetch(task.publicKey);
-  //   console.log("Your task", taskAccount);
+    const taskAccount = await program.account.task.fetch(task.publicKey);
+    console.log("Your task", taskAccount);
 
-  //   assert.equal(
-  //     taskAccount.author.toBase58(),
-  //     author.wallet.publicKey.toBase58()
-  //   );
-  //   assert.equal(taskAccount.isDone, true);
-  // });
+    assert.equal(
+      taskAccount.author.toBase58(),
+      author.wallet.publicKey.toBase58()
+    );
+    assert.equal(taskAccount.isDone, true);
+  });
 
   // it("cannot create a task with more than 400 characters", async () => {
   //   const task = anchor.web3.Keypair.generate();
